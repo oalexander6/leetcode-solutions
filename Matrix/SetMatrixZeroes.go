@@ -37,13 +37,13 @@ func setZeroes(matrix [][]int) {
 	}
 }
 
-func main() {
-	input := [][]int{
-		[]int{1, 2, 3, 4},
-		[]int{5, 0, 7, 8},
-		[]int{0, 10, 11, 12},
-		[]int{13, 14, 15, 0},
-	}
+// func main() {
+// 	input := [][]int{
+// 		[]int{1, 2, 3, 4},
+// 		[]int{5, 0, 7, 8},
+// 		[]int{0, 10, 11, 12},
+// 		[]int{13, 14, 15, 0},
+// 	}
 
-	setZeroes(input)
-}
+// 	setZeroes(input)
+// }
