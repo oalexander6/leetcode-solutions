@@ -17,38 +17,16 @@ func reverseList(head *ListNode) *ListNode {
 		return nil
 	}
 
-	currNode := head.Next
-	prevNode := head
+	prev := head
+	curr := head.Next
+	prev.Next = nil
 
-	for {
-		if currNode == nil {
-			break
-		}
-
-		next := currNode.Next
-		currNode.Next = prevNode
-		prevNode = currNode
-		currNode = next
+	for curr != nil {
+		newCurr := curr.Next
+		curr.Next = prev
+		prev = curr
+		curr = newCurr
 	}
 
-	return prevNode
-}
-
-func main() {
-	node := &ListNode{
-		Val: 1,
-		Next: &ListNode{
-			Val: 2,
-			Next: &ListNode{
-				Val: 3,
-				Next: &ListNode{
-					Val: 4,
-					Next: &ListNode{
-						Val: 5,
-					},
-				},
-			},
-		},
-	}
-	reverseList(node)
+	return prev
 }
