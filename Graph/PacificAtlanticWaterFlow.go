@@ -1,66 +1,61 @@
-package main
+package graph
 
-type Entry struct {
-	ReachesAtl    bool
-	ReachesPac    bool
-	VisitedForAtl bool
-	VisitedForPac bool
+type position struct {
+	Row int
+	Col int
 }
 
-// type Position struct {
-//     Row int
-//     Col int
-// }
-
 func pacificAtlantic(heights [][]int) [][]int {
-	memo := createMemo(len(heights), len(heights[0]))
+	NUM_ROWS := len(heights)
+	NUM_COLS := len(heights[0])
 
-	for row := 1; row < len(heights); row++ {
-		for col := 1; col < len(heights[0]); col++ {
+	visitedPac := make(map[position]bool)
+	visitedAtl := make(map[position]bool)
 
-		}
+	for row := 0; row < NUM_ROWS; row++ {
+		dfs(row, 0, visitedPac, heights[row][0], heights)
+		dfs(row, NUM_COLS-1, visitedAtl, heights[row][NUM_COLS-1], heights)
+	}
+
+	for col := 0; col < NUM_COLS; col++ {
+		dfs(0, col, visitedPac, heights[0][col], heights)
+		dfs(NUM_ROWS-1, col, visitedAtl, heights[NUM_ROWS-1][col], heights)
 	}
 
 	results := make([][]int, 0)
-	for row := 0; row < len(heights); row++ {
-		for col := 0; col < len(heights[0]); col++ {
-			if memo[row][col].ReachesAtl && memo[row][col].ReachesPac {
-				results = append(results, []int{row, col})
-			}
+	for pos, _ := range visitedPac {
+		if _, isVisitedBoth := visitedAtl[pos]; isVisitedBoth {
+			results = append(results, []int{pos.Row, pos.Col})
 		}
 	}
 	return results
 }
 
-func dfs(memo [][]Entry, row int, col int) {
+func dfs(row int, col int, visited map[position]bool, lastHeight int, heights [][]int) {
+	currPos := position{
+		Row: row,
+		Col: col,
+	}
+	_, isVisited := visited[currPos]
 
-}
-
-func createMemo(numRows, numCols int) [][]Entry {
-	memo := make([][]Entry, numRows)
-
-	for i := 0; i < numRows; i++ {
-		memo[i] = make([]Entry, numCols)
-		for j := 0; j < numCols; j++ {
-			entry := Entry{}
-
-			if i == 0 || j == 0 {
-				entry.ReachesPac = true
-				entry.VisitedForPac = true
-			}
-
-			if i == numRows-1 || j == numCols-1 {
-				entry.ReachesAtl = true
-				entry.VisitedForAtl = true
-			}
-
-			memo[i][j] = entry
-		}
+	if isVisited || !isValidPosition(row, col, len(heights), len(heights[0])) || heights[row][col] < lastHeight {
+		return
 	}
 
-	return memo
+	visited[currPos] = true
+
+	neighbors := []position{
+		{Row: row + 1, Col: col},
+		{Row: row - 1, Col: col},
+		{Row: row, Col: col + 1},
+		{Row: row, Col: col - 1},
+	}
+
+	for _, pos := range neighbors {
+		dfs(pos.Row, pos.Col, visited, heights[row][col], heights)
+	}
 }
 
-func main() {
-	pacificAtlantic([][]int{{1}})
+func isValidPosition(row int, col int, numRows int, numCols int) bool {
+	return row >= 0 && row < numRows && col >= 0 && col < numCols
 }
